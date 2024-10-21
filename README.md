@@ -1,5 +1,7 @@
 # Pandemic Simulation System
 
+yaafay
+
 A system designed to simulate the spread of a pandemic across various regions and analyze the effects of different intervention strategies, such as lockdowns, vaccinations, and health care resource allocation. The system continuously adapts its predictions based on incoming data, providing suggestions for optimal policies to minimize the pandemic's impact.
 
 ## Features
