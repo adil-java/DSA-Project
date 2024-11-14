@@ -142,8 +142,8 @@ void displayIntervention() {
                               },
                               simulation_duration);
 
-        double beta = 0.3;
-        double gamma = 0.1;
+        double beta = 0.3; //(infection rate)
+        double gamma = 0.1;//(Recovery rate)
         double infected = 60;
         for (double day = 0; day <= simulation_duration; day += 1) {
             model.applyInterventions(beta, gamma, day, infected);
