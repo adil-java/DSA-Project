@@ -8,10 +8,10 @@ A system designed to simulate the spread of a pandemic across various regions an
 3. **Infection Trends and Statistics** YAFAY
 
 7. **Optimized Route and Policy Suggestions** ADIL   
+4. **Customizable Infection Rates** Adil  
 
 2. **Dynamic Interventions**  ALI 
 5. **Recovery Simulation**  ALI
-4. **Customizable Infection Rates** ALI  
 
 
 6. **Add and Remove Regions** 
