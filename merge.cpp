@@ -706,6 +706,7 @@ int main()
     int current_day = 0;
     bool is_simulation_running = false;
     double current_day = 0;
+    bool exit_program = false;
     while (!exit_program)
     {
         cout << "\n=== Simulation Menu ===\n";
