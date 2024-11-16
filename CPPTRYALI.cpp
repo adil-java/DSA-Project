@@ -309,43 +309,60 @@ int main()
     int population;
     int infected;
     int recovered = 0; // Initialize recovered population
-
-    cout << "=== Infection Simulation Interactive Setup ===\n";
-
-    // Set simulation parameters
-    cout << "Enter simulation duration in days: ";
-    cin >> simulation_duration;
-
-    cout << "Enter total population: ";
-    cin >> population;
-
-    cout << "Enter initial number of infected individuals: ";
-    cin >> infected;
-    if (infected > population)
-    {
-        cout << "Initial infected cannot exceed total population. Setting infected to population.\n";
-        infected = population;
-    }
-
-    cout << "Enter number of recovered individuals (e.g., 0): ";
-    cin >> recovered;
-    if (recovered > (population - infected))
-    {
-        cout << "Initial recovered cannot exceed population minus infected. Setting recovered to "
-             << (population - infected) << ".\n";
-        recovered = population - infected;
-    }
-
-    cout << "Enter infection rate (beta, e.g., 1.0): ";
-    cin >> beta;
-    customInfectionRates.addInfectionRate(beta); // Initialize with initial beta
-
-    cout << "Enter recovery rate (gamma, e.g., 0.1): ";
-    cin >> gamma;
-    // Assuming gamma is a rate between 0 and 1
-    recoverySim.recordRecovery(static_cast<int>(gamma * 100)); // Store as percentage
-
     bool exit_program = false;
+    bool is_simulation_running = false;
+    cout << "Do you want to run the simulation? (y/n): ";
+    char run_simulation;
+    cin >> run_simulation;
+    if (run_simulation == 'y')
+    {
+        is_simulation_running = true;
+    }
+    else
+    {
+        exit_program = true;
+    }
+
+    if (is_simulation_running)
+    {
+
+        cout << "=== Infection Simulation Interactive Setup ===\n";
+
+        // Set simulation parameters
+        cout << "Enter simulation duration in days: ";
+        cin >> simulation_duration;
+
+        cout << "Enter total population: ";
+        cin >> population;
+
+        cout << "Enter initial number of infected individuals: ";
+        cin >> infected;
+        if (infected > population)
+        {
+            cout << "Initial infected cannot exceed total population. Setting infected to population.\n";
+            infected = population;
+        }
+
+        cout << "Enter number of recovered individuals (e.g., 0): ";
+        cin >> recovered;
+        if (recovered > (population - infected))
+        {
+            cout << "Initial recovered cannot exceed population minus infected. Setting recovered to "
+                 << (population - infected) << ".\n";
+            recovered = population - infected;
+        }
+
+        cout << "Enter infection rate (beta, e.g., 1.0): ";
+        cin >> beta;
+        customInfectionRates.addInfectionRate(beta); // Initialize with initial beta
+
+        cout << "Enter recovery rate (gamma, e.g., 0.1): ";
+        cin >> gamma;
+        // Assuming gamma is a rate between 0 and 1
+        recoverySim.recordRecovery(static_cast<int>(gamma * 100)); // Store as percentage
+
+        bool exit_program = false;
+    }
     double current_day = 0;
 
     while (!exit_program)
