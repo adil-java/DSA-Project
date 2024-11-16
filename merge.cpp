@@ -627,11 +627,21 @@ public:
         }
     }
 
+    // void displayRegions() const
+    // {
+    //     cout << "Regions Sorted by Infection Count:\n";
+    //     for (const auto &[count, region] : sorted_regions)
+    //         cout << region << ": " << count << " infections\n";
+    // }
     void displayRegions() const
     {
         cout << "Regions Sorted by Infection Count:\n";
-        for (const auto &[count, region] : sorted_regions)
+        for (const auto &pair : sorted_regions)
+        {
+            const auto &count = pair.first;
+            const auto &region = pair.second;
             cout << region << ": " << count << " infections\n";
+        }
     }
 };
 
@@ -693,7 +703,7 @@ int main()
     int population;
     int infected;
     int recovered = 0; // Initialize recovered population
-    bool exit_program = false;
+    int current_day = 0;
     bool is_simulation_running = false;
     double current_day = 0;
     while (!exit_program)
