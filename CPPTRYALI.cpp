@@ -8,6 +8,7 @@
 #include <functional>
 #include <limits> // For std::numeric_limits
 #include <algorithm>
+#include <utility>
 using namespace std;
 
 // ------------------------------------ Dynamic Intervention Class ------------------------------------
@@ -244,11 +245,21 @@ public:
         }
     }
 
+    // void displayRegions() const
+    // {
+    //     cout << "Regions Sorted by Infection Count:\n";
+    //     for (const auto &[count, region] : sorted_regions)
+    //         cout << region << ": " << count << " infections\n";
+    // }
     void displayRegions() const
     {
         cout << "Regions Sorted by Infection Count:\n";
-        for (const auto &[count, region] : sorted_regions)
+        for (const auto &pair : sorted_regions)
+        {
+            const auto &count = pair.first;
+            const auto &region = pair.second;
             cout << region << ": " << count << " infections\n";
+        }
     }
 };
 
