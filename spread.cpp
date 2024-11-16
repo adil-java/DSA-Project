@@ -253,6 +253,7 @@ public:
                  << " | Population: " << region->population
                  << " | Infection Rate: " << region->infectionRate
                  << "% | Infected: " << (region->infected ? "Yes" : "No") << "\n";
+                 cout<<endl;
         }
     }
 
