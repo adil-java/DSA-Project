@@ -8,7 +8,6 @@
 #include <functional>
 #include <limits> // For std::numeric_limits
 #include <algorithm>
-using namespace std;
 #include <iostream>
 #include <vector>
 #include <queue>
@@ -119,12 +118,10 @@ public:
     }
 
     // Simulate recoveries and deaths
-    void simulateRecoveryAndDeaths()
-    {
-        if (stats.dailyInfected)
-        {
-            int recoveriesToday = stats.dailyInfected ? stats.dailyInfected->value * 0.2 : 0; // 20% recovery
-            int deathsToday = stats.dailyInfected ? stats.dailyInfected->value * 0.05 : 0;    // 5% death rate
+    void simulateRecoveryAndDeaths() {
+        if(stats.dailyInfected){
+        int recoveriesToday = stats.dailyInfected ? stats.dailyInfected->value * 0.2 : 0; // 20% recovery
+        int deathsToday = stats.dailyInfected ? stats.dailyInfected->value * 0.05 : 0;    // 5% death rate
 
             stats.addDailyData(stats.dailyRecovered, recoveriesToday);
             stats.addDailyData(stats.dailyDeaths, deathsToday);
