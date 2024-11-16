@@ -681,9 +681,7 @@ public:
 };
 
 // ------------------------------------ Main Interactive Function ------------------------------------
-void displayAli()
-{
-}
+
 int main()
 {
     DynamicIntervention model;
@@ -697,11 +695,11 @@ int main()
     int recovered = 0; // Initialize recovered population
     bool exit_program = false;
     bool is_simulation_running = false;
-    bool exit_program = false;
+    double current_day = 0;
     while (!exit_program)
     {
         cout << "\n=== Simulation Menu ===\n";
-        cout << "0. Information\n";
+        cout << "0. Provide Information\n";
         cout << "1. Add Intervention\n";
         cout << "2. Remove Intervention\n";
         cout << "3. View Current Interventions\n";
@@ -710,7 +708,7 @@ int main()
         cout << "6. View Statistics\n";
         cout << "7. Customize Infection Rate\n"; // New option
         cout << "8. Customize Recovery Rate\n";
-        cout << " 9. Spread Simulation" << "\n"; // New option
+        cout << "9. Spread Simulation" << "\n"; // New option
         cout << "10. Exit\n";                    // Updated exit option number
         cout << "Select an option: ";
 
@@ -771,7 +769,7 @@ int main()
                 // Assuming gamma is a rate between 0 and 1
                 recoverySim.recordRecovery(static_cast<int>(gamma * 100)); // Store as percentage
             }
-            double current_day = 0;
+            
             break;
         }
         case 1:
