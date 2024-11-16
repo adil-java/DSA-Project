@@ -1,17 +1,15 @@
 #include <iostream>
 #include <bits/stdc++.h>
+#include <iostream>
+#include <vector>
+#include <string>
+#include <functional>
 using namespace std;
 
 class InfectionSpread
 {
     // yaafay
 };
-
-#include <iostream>
-#include <vector>
-#include <string>
-#include <functional>
-
 class InfectionTrendsAndStatistics
 {
     // ali
