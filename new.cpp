@@ -695,7 +695,7 @@ int main()
     int population;
     int infected;
     int recovered = 0; // Initialize recovered population
-    bool exit_program = false;
+    int current_day = 0;
     bool is_simulation_running = false;
     bool exit_program = false;
     while (!exit_program)
