@@ -1,12 +1,9 @@
 #include <iostream>
-#include <unordered_map>
-#include <vector>
-#include <queue>
-#include <utility>
-#include <algorithm>
 #include <string>
-#include <deque>
 #include <functional>
+#include <vector>
+#include <unordered_map>
+#include <algorithm>
 #define SIZE 100
 using namespace std;
 
