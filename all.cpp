@@ -705,12 +705,7 @@ int main()
     int recovered = 0; // Initialize recovered population
     int current_day = 0;
     bool is_simulation_running = false;
-<<<<<<< HEAD
-    double current_day = 0;
-    bool exit_p
-=======
     bool exit_program = false;
->>>>>>> b3c3e2f516ad20de456beb864ace07adc96df564
     while (!exit_program)
     {
         cout << "\n=== Simulation Menu ===\n";
