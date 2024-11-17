@@ -547,7 +547,7 @@ void Display() {
                 cout << "Enter the name of the intervention to remove: ";
                 cin >> ws; // To consume any leading whitespace
                 getline(cin, name);
-                bool removed = simulation.interventions.removeIntervention(name);
+                bool removed = simulation.interventions.removeIntervention(name, simulation.regions);
                 if (removed)
                     cout << "Intervention \"" << name << "\" removed successfully.\n";
                 else
