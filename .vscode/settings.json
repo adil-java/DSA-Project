@@ -63,6 +63,10 @@
     "unordered_map": "cpp",
     "xstring": "cpp",
     "map": "cpp",
-    "functional": "cpp"
+    "functional": "cpp",
+    "algorithm": "cpp",
+    "deque": "cpp",
+    "queue": "cpp",
+    "stdexcept": "cpp"
   }
 }
