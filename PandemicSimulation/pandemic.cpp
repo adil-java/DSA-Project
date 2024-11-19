@@ -152,7 +152,7 @@ public:
     {
         if (isFull())
         {
-            // cout << "Queue is full. Cannot enqueue " << value << endl;
+            
             resize();
         }
 
