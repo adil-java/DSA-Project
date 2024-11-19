@@ -8,9 +8,15 @@
 #include <functional>
 #include <limits> // For std::numeric_limits
 #include <algorithm>
+#include <windows.h>
 using namespace std;
 
 // ------------------------------------ Dynamic Intervention Class ------------------------------------
+void setConsoleColor(int color) {
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(hConsole, color);
+}
+
 class DynamicIntervention
 {
 public:
@@ -82,6 +88,7 @@ public:
     {
         for (const auto &intervention : interventions)
         {
+         
             cout << "Intervention " << intervention.name << " | Type: " << intervention.type
                  << " | Start: " << intervention.start_DAYS << " | End: " << intervention.end_DAYS
                  << " | Effectiveness: " << intervention.effectiveness << "\n";
@@ -150,6 +157,7 @@ public:
     // Display infection trends
     void displayTrends()
     {
+        
         cout << "Average Infection Rate (Last " << window_size << " Days): " << calculateAverageInfectionRate() << "\n";
         cout << "Highest Infection Rate Recorded: " << getHighestInfectionRate() << "\n";
         cout << "Trend: " << (isIncreasingTrend() ? "Increasing" : "Stable/Decreasing") << "\n";
@@ -556,12 +564,13 @@ public:
             recoverySim.recordRecovery(totalRecoveries);
 
             // Display daily statistics
-            cout << "\nDaily Statistics for Day " << day << ":\n";
-            cout << "New Infections: " << dailyStats[day].first << "\n";
-            cout << "New Recoveries: " << dailyStats[day].second << "\n";
-            cout << "Total Infected: " << totalInfected << "\n";
-            cout << "Total Recovered: " << totalRecoveries << "\n";
-            cout << "Total Deaths: " << totalDeaths << "\n";
+               setConsoleColor(4); // Light green text
+            cout << "\t Daily Statistics for Day " << "[ "<<day<<" ]" << ":\n";
+            cout << "\t New Infections: " << dailyStats[day].first << "\n";
+            cout << "\t New Recoveries: " << dailyStats[day].second << "\n";
+            cout << "\t Total Infected: " << totalInfected << "\n";
+            cout << "\t Total Recovered: " << totalRecoveries << "\n";
+            cout << "\t Total Deaths: " << totalDeaths << "\n";
         }
 
         // Display summary of the spread
@@ -602,13 +611,14 @@ public:
             total_deaths += region->deaths;
             population += region->population; // Sum population
         }
-
-        cout << "\n=== Aggregate Pandemic Statistics ===\n";
-        cout << "Total Infected: " << total_infected << "\n";
-        cout << "Total Recovered: " << total_recovered << "\n";
-        cout << "Total Deaths: " << total_deaths << "\n";
-        cout << "Total Population: " << population << "\n";
-        cout << "Susceptible Population: " << (population - total_infected - total_recovered - total_deaths) << "\n";
+        setConsoleColor(4);
+        cout << "\t=== Aggregate Pandemic Statistics ===\n";
+        cout << "\tTotal Infected: " << total_infected << "\n";
+        cout << "\tTotal Recovered: " << total_recovered << "\n";
+        cout << "\tTotal Deaths: " << total_deaths << "\n";
+        cout << "\tTotal Population: " << population << "\n";
+        cout << "\tSusceptible Population: " << (population - total_infected - total_recovered - total_deaths) << "\n";
+        setConsoleColor(15);
     }
 
     void advanceOneDay(InfectionTrendsAndStatistics &infectionStats, RecoverySimulation &recoverySim)
@@ -650,8 +660,10 @@ int main()
     int deaths = 0;    // Initialize deaths population
     bool exit_program = false;
     bool is_simulation_running = false;
+    setConsoleColor(2); // Light green text
     cout << "Do you want to run the simulation? (y/n): ";
     char run_simulation;
+    setConsoleColor(15); // Reset to default
     cin >> run_simulation;
     if (run_simulation == 'y' || run_simulation == 'Y')
     {
@@ -664,54 +676,70 @@ int main()
 
     if (is_simulation_running)
     {
+        cout << "\n=== Infection Simulation Interactive Setup ===\n";
 
-        cout << "=== Infection Simulation Interactive Setup ===\n";
-
+        setConsoleColor(2); // Light green text
         // Set simulation parameters
         cout << "Enter simulation duration in days: ";
+        setConsoleColor(15); // Reset to default
         cin >> simulation_duration;
-
+        setConsoleColor(2); // Light green text
         cout << "Enter total population: ";
+        setConsoleColor(15); // Reset to default
         cin >> population;
-
+        setConsoleColor(2); // Light green text
         cout << "Enter initial number of infected individuals: ";
+        setConsoleColor(15); // Reset to default
         cin >> infected;
         if (infected > population)
         {
+            setConsoleColor(4); // Light red text
             cout << "Initial infected cannot exceed total population. Setting infected to population.\n";
             infected = population;
+            setConsoleColor(15); // Reset to default
         }
-
+        setConsoleColor(2); // Light green text
         cout << "Enter number of recovered individuals (e.g., 0): ";
+        setConsoleColor(15); // Reset to default
         cin >> recovered;
         if (recovered > (population - infected))
         {
+            setConsoleColor(4); // Light red text
             cout << "Initial recovered cannot exceed population minus infected. Setting recovered to "
                  << (population - infected) << ".\n";
             recovered = population - infected;
+            setConsoleColor(15); // Reset to default
         }
-
+        setConsoleColor(2); // Light green text
         cout << "Enter infection rate (beta, e.g., 1.0): ";
+        setConsoleColor(15); // Reset to default
         cin >> beta;
         if (beta < 0.0 || beta > 100.0)
         {
+            setConsoleColor(4); // Light red text
             cout << "Invalid infection rate. Please enter a value between 0 and 100.\n";
+            setConsoleColor(15); // Reset to default
             return 1; // Exit the program due to invalid input
         }
         customInfectionRates.addInfectionRate(beta); // Initialize with initial beta
-
+        setConsoleColor(2); // Light green text
         cout << "Enter recovery rate (gamma, e.g., 0.1): ";
+        setConsoleColor(15); // Reset to default
         cin >> gamma;
         if (gamma < 0.0 || gamma > 1.0)
         {
+            setConsoleColor(4); // Light red text
             cout << "Invalid recovery rate. Please enter a value between 0 and 1.\n";
+            setConsoleColor(15); // Reset to default
             return 1; // Exit the program due to invalid input
         }
         recoverySim.recordRecovery(static_cast<int>(gamma * 100)); // Store as percentage
 
         // Initialize Pandemic Simulation Regions
         int numRegions;
+        setConsoleColor(2); // Light green text
         cout << "\nEnter the number of regions for Pandemic Simulation: ";
+        setConsoleColor(15); // Reset to default
         cin >> numRegions;
         cin.ignore(); // To consume the newline character left by cin
 
@@ -719,10 +747,13 @@ int main()
         {
             string regionName;
             int regionPopulation;
-
-            cout << "\nEnter the name of region " << (i + 1) << ": ";
+            setConsoleColor(2); // Light green text
+            cout << "Enter the name of region " << (i + 1) << ": ";
+            setConsoleColor(15); // Reset to default
             getline(cin, regionName);
+            setConsoleColor(2); // Light green text
             cout << "Enter the population of " << regionName << ": ";
+            setConsoleColor(15); // Reset to default
             cin >> regionPopulation;
             cin.ignore();
 
@@ -734,13 +765,19 @@ int main()
         while (connectMore == "y" || connectMore == "Y")
         {
             string region1, region2;
+            setConsoleColor(2); // Light green text
             cout << "\nEnter two regions to connect:\nFirst Region: ";
+            setConsoleColor(15); // Reset to default
             getline(cin, region1);
+            setConsoleColor(2); // Light green text
             cout << "Second Region: ";
+            setConsoleColor(15); // Reset to default
             getline(cin, region2);
 
             pandemicSim.connectRegions(region1, region2);
+            setConsoleColor(2); // Light green text
             cout << "Do you want to add more connections (y/n)? ";
+            setConsoleColor(15); // Reset to default
             cin >> connectMore;
             cin.ignore();
         }
@@ -748,15 +785,19 @@ int main()
         // Start infection spread in Pandemic Simulation with Detailed Statistics
         string startRegion;
         double initialInfectionRate;
+        setConsoleColor(2); // Light green text
         cout << "\nEnter the starting region for infection simulation: ";
         getline(cin, startRegion);
-        cout << "Enter the initial infection rate (percentage): ";
+        setConsoleColor(15); // Reset to default
+        cout << "Enter the initial infection rate (percentage %): ";
+        setConsoleColor(15); // Reset to default
         cin >> initialInfectionRate;
         cin.ignore();
 
         // Validate infection rate
         if (initialInfectionRate < 0.0 || initialInfectionRate > 100.0)
         {
+            setConsoleColor(4); // Light red text
             cout << "Invalid infection rate. Please enter a value between 0 and 100.\n";
             return 1; // Exit the program due to invalid input
         }
@@ -767,19 +808,21 @@ int main()
 
     while (!exit_program)
     {
-        cout << "\n=== Simulation Menu ===\n";
-        cout << "1. Add Intervention\n";
-        cout << "2. Remove Intervention\n";
-        cout << "3. View Current Interventions\n";
-        cout << "4. Run Simulation Step (" << current_day << " Day)\n";
-        cout << "5. Run Entire Simulation\n";
-        cout << "6. View Statistics\n";
-        cout << "7. Customize Infection Rate\n"; // New option
-        cout << "8. Customize Recovery Rate\n";  // New option
-        cout << "9. Manage Pandemic Spread\n";   // New option for PandemicSimulation
-        cout << "10. Exit\n";                    // Updated exit option number
+        setConsoleColor(2); // Light green text
+        cout << "\t====== Simulation Menu =====\n";
+        cout << "|\t1. Add Intervention\t|\n";
+        cout << "|\t2. Remove Intervention\t|\n";
+        cout << "|\t3. View Current Interventions\t|\n";
+        cout << "|\t4. Run Simulation Step (" << current_day << " Day)\t|\n";
+        cout << "|\t5. Run Entire Simulation\t|\n";
+        cout << "|\t6. View Statistics\t|\n";
+        cout << "|\t7. Customize Infection Rate\t|\n"; // New option
+        cout << "|\t8. Customize Recovery Rate\t|\n";  // New option
+        cout << "|\t9. Manage Pandemic Spread\t|\n";   // New option for PandemicSimulation
+        cout << "|\t10. Exit\t|";        
+        cout<<"\t===============================\n";            // Updated exit option number
         cout << "Select an option: ";
-
+        setConsoleColor(15); // Reset to default
         int choice;
         cin >> choice;
 
@@ -790,16 +833,22 @@ int main()
             // Add Intervention
             string name, type;
             double start_day, effectiveness;
+            setConsoleColor(2); // Light green text
             cout << "Enter intervention name: ";
+            setConsoleColor(15); // Reset to default
             cin >> ws; // To consume any leading whitespace
             getline(cin, name);
+            setConsoleColor(2); // Light green text
             cout << "Enter intervention type (lockdown/quarantine/vaccination): ";
+            setConsoleColor(15); // Reset to default
             getline(cin, type);
-
+            setConsoleColor(2); // Light green text
             cout << "Enter effectiveness percentage (0-100): ";
+            setConsoleColor(15); // Reset to default
             cin >> effectiveness;
-
+            setConsoleColor(2); // Light green text
             cout << "Enter start day for the intervention: ";
+            setConsoleColor(15); // Reset to default
             cin >> start_day;
 
             // Define activation and deactivation conditions (simple examples)
@@ -815,7 +864,9 @@ int main()
             };
 
             model.addIntervention(name, start_day, effectiveness, type, activate_cond, deactivate_cond, simulation_duration);
+            setConsoleColor(2); // Light green text
             cout << "Intervention added successfully.\n";
+            setConsoleColor(15); // Reset to default
 
             break;
         }
@@ -823,13 +874,17 @@ int main()
         {
             // Remove Intervention
             string name;
+            setConsoleColor(2); // Light green text
             cout << "Enter the name of the intervention to remove: ";
+            setConsoleColor(15); // Reset to default
             cin >> ws; // To consume any leading whitespace
             getline(cin, name);
 
             // Implement removal by name
             bool removed = model.removeIntervention(name);
+            setConsoleColor(2); // Light green text
             if (removed)
+                
                 cout << "Intervention \"" << name << "\" removed successfully.\n";
             else
                 cout << "Intervention \"" << name << "\" not found.\n";
@@ -855,6 +910,7 @@ int main()
 
             // Apply interventions
             model.applyInterventions(beta, gamma, current_day, infected);
+            setConsoleColor(15); // Reset to default
             cout << "Infection Rate (Beta): " << beta << "\n";
             cout << "Recovery Rate (Gamma): " << gamma << "\n";
 
@@ -945,12 +1001,14 @@ int main()
         case 7:
         {
             // Customize Infection Rate
+            setConsoleColor(2); // Light green text
             cout << "\n=== Customize Infection Rate ===\n";
             cout << "1. Add a new Infection Rate\n";
             cout << "2. View Current Infection Rates\n";
             cout << "3. Remove the Highest Infection Rate\n";
             cout << "4. Back to Main Menu\n";
             cout << "Select an option: ";
+            setConsoleColor(15); // Reset to default
 
             int sub_choice;
             cin >> sub_choice;
@@ -964,10 +1022,12 @@ int main()
                 cin >> new_beta;
                 if (new_beta < 0.0 || new_beta > 100.0)
                 {
+                    setConsoleColor(4); // Light red text
                     cout << "Invalid infection rate. Please enter a value between 0 and 100.\n";
                     break;
                 }
                 customInfectionRates.addInfectionRate(new_beta);
+                setConsoleColor(2); // Light green text
                 cout << "New infection rate added.\n";
                 break;
             }
@@ -979,6 +1039,7 @@ int main()
             case 3:
             {
                 customInfectionRates.removeHighestInfectionRate();
+                setConsoleColor(2); // Light green text
                 cout << "Highest infection rate removed.\n";
                 break;
             }
@@ -988,6 +1049,7 @@ int main()
                 break;
             }
             default:
+                setConsoleColor(4); // Light red text
                 cout << "Please select a valid option (1-4).\n";
             }
 
@@ -996,12 +1058,13 @@ int main()
         case 8:
         {
             // Customize Recovery Rate
+            setConsoleColor(2); // Light green text
             cout << "\n=== Customize Recovery Rate ===\n";
             cout << "1. Add a new Recovery Rate\n";
             cout << "2. View Current Recovery Rates\n";
             cout << "3. Back to Main Menu\n";
             cout << "Select an option: ";
-
+            setConsoleColor(15); // Reset to default
             int sub_choice;
             cin >> sub_choice;
 
@@ -1010,11 +1073,14 @@ int main()
             case 1:
             {
                 double new_gamma;
+
                 cout << "Enter new recovery rate (gamma, e.g., 0.1): ";
                 cin >> new_gamma;
                 if (new_gamma < 0.0 || new_gamma > 1.0)
                 {
+                    setConsoleColor(4); // Light red text
                     cout << "Invalid recovery rate. Please enter a value between 0 and 1.\n";
+                    setConsoleColor(15); // Reset to default
                     break;
                 }
                 recoverySim.recordRecovery(static_cast<int>(new_gamma * 100)); // Assuming gamma as percentage
@@ -1032,7 +1098,9 @@ int main()
                 break;
             }
             default:
+                setConsoleColor(4); // Light red text
                 cout << "Please select a valid option (1-3).\n";
+                setConsoleColor(15); // Reset to default
             }
 
             break;
@@ -1040,6 +1108,7 @@ int main()
         case 9:
         {
             // Manage Pandemic Spread
+            setConsoleColor(2); // Light green text
             cout << "\n=== Manage Pandemic Spread ===\n";
             cout << "1. Add a new Region\n";
             cout << "2. Connect Regions\n";
@@ -1047,8 +1116,8 @@ int main()
             cout << "4. Display All Regions\n";
             cout << "5. Display Pandemic Statistics\n";
             cout << "6. Back to Main Menu\n";
+            setConsoleColor(15); // Reset to default
             cout << "Select an option: ";
-
             int spread_choice;
             cin >> spread_choice;
             cin.ignore(); // To consume the newline
@@ -1062,21 +1131,31 @@ int main()
                 {
                     string regionName;
                     int regionPopulation;
+                    setConsoleColor(2); // Light green text
                     cout << "Enter the name of the new region: ";
+                    setConsoleColor(15); // Reset to default
                     getline(cin, regionName);
+                    setConsoleColor(2); // Light green text
                     cout << "Enter the population of " << regionName << ": ";
+                    setConsoleColor(15); // Reset to default
                     cin >> regionPopulation;
                     cin.ignore();
                     pandemicSim.addRegion(regionName, regionPopulation);
+                    setConsoleColor(2); // Light green text
                     cout << "Region added successfully.\n";
+                    setConsoleColor(15); // Reset to default
                     break;
                 }
                 case 2:
                 {
                     string region1, region2;
+                    setConsoleColor(2); // Light green text
                     cout << "Enter the first region to connect: ";
+                    setConsoleColor(15); // Reset to default
                     getline(cin, region1);
+                    setConsoleColor(2); // Light green text
                     cout << "Enter the second region to connect: ";
+                    setConsoleColor(15); // Reset to default
                     getline(cin, region2);
                     pandemicSim.connectRegions(region1, region2);
                     break;
@@ -1085,9 +1164,13 @@ int main()
                 {
                     string startRegion;
                     double initialInfectionRate;
+                    setConsoleColor(2); // Light green text
                     cout << "Enter the starting region for infection simulation: ";
+                    setConsoleColor(15); // Reset to default
                     getline(cin, startRegion);
+                    setConsoleColor(2); // Light green text
                     cout << "Enter the initial infection rate (percentage): ";
+                    setConsoleColor(15); // Reset to default
                     cin >> initialInfectionRate;
                     cin.ignore();
                     if (initialInfectionRate < 0.0 || initialInfectionRate > 100.0)
@@ -1114,11 +1197,14 @@ int main()
                     break;
                 }
                 default:
+                    setConsoleColor(4); // Light red text
                     cout << "Please select a valid option (1-6).\n";
+                    setConsoleColor(15); // Reset to default
                 }
 
                 if (flag)
                 {
+                    setConsoleColor(2); // Light green text
                     cout << "\n=== Manage Pandemic Spread ===\n";
                     cout << "1. Add a new Region\n";
                     cout << "2. Connect Regions\n";
@@ -1127,6 +1213,7 @@ int main()
                     cout << "5. Display Pandemic Statistics\n";
                     cout << "6. Back to Main Menu\n";
                     cout << "Select an option: ";
+                    setConsoleColor(15); // Reset to default
                     cin >> spread_choice;
                     cin.ignore(); // To consume the newline
                 }
@@ -1137,11 +1224,15 @@ int main()
         {
             // Exit
             exit_program = true;
+            setConsoleColor(2); // Light green text
             cout << "Exiting simulation. Goodbye!\n";
+            setConsoleColor(15); // Reset to default
             break;
         }
         default:
+            setConsoleColor(4); // Light red text
             cout << "Please select a valid option (1-10).\n";
+            setConsoleColor(15); // Reset to default
         }
     }
 
