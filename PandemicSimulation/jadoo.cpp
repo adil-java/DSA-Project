@@ -1,12 +1,12 @@
-#include <iostream>
-#include <vector>
-#include <unordered_map>
-#include <map>
-#include <string>
-#include <functional>
+#include <iostream> //
+#include <vector> //
+#include <unordered_map> //
+#include <map> //
+#include <string> //
+#include <functional> //
 #include <limits> // For std::numeric_limits
-#include <algorithm>
-#include <windows.h>
+#include <algorithm> //
+#include <windows.h> // This Library is used to set the console color
 using namespace std;
 
 // ------------------------------------ Dynamic Intervention Class ------------------------------------
@@ -37,7 +37,7 @@ public:
                          function<bool(double, double, double)> activate_cond,
                          function<bool(double, double, double)> deactivate_cond, int simulation_duration)
     {
-        double duration = (effectiveness / 100.0) * simulation_duration;
+        double duration = (effectiveness / 100.0) * simulation_duration;// Calculate the duration of the intervention
         double end = start + duration;
         interventions.emplace_back(name, start, end, effectiveness, type);
         interventions.back().activation_condition = activate_cond;
@@ -108,13 +108,13 @@ public:
     }
 
 private:
-    vector<Intervention> interventions;
+    vector<Intervention> interventions; // object of struct Intervention to store the interventions
 };
 
-// ------------------------------------ InfectionTrendsAndStatistics Class ------------------------------------
+// ------------------------------------ InfectionTrendsAndStatistics Class ------------------------------------ //
 
-template <typename T>
-class CircularQueue
+template <typename T> // Template class for CircularQueue
+class CircularQueue // Purpose of this class is to store the infection rates in a circular queue
 {
 private:
     vector<T> queue; // Vector to hold queue elements
@@ -141,8 +141,8 @@ private:
 
 public:
     // Constructor
-    CircularQueue(int maxSize = 999999999)
-        : capacity(maxSize), front(-1), rear(-1), currentSize(0)
+    CircularQueue(int maxSize = 999999999) 
+        : capacity(maxSize), front(-1), rear(-1), currentSize(0) // Initialize the queue with the given capacity
     {
         queue.resize(capacity);
     }
@@ -230,7 +230,7 @@ public:
     }
 };
 
-class InfectionTrendsAndStatistics
+class InfectionTrendsAndStatistics //purpose of this class is to store the infection rates and calculate the average infection rate
 {
 private:
     CircularQueue<int> infection_window; // Sliding window of recent infection counts
@@ -257,7 +257,7 @@ public:
         // Add to sliding window
         if (infection_window.isFull())
         {
-            current_infection_sum -= infection_window.getFront();
+            current_infection_sum -= infection_window.getFront(); // Remove the front element
             infection_window.deQueue();
         }
 
@@ -315,13 +315,13 @@ public:
 
 // ------------------------------------ CustomizableInfectionRates Class ------------------------------------
 template <typename T>
-class PriorityQueue
+class PriorityQueue // purpose of this class is to store the infection rates in a priority queue and get the highest infection rate
 {
 private:
     vector<pair<T, int>> heap; // Pair of value and priority
 
     // Heapify up for maintaining max-heap property
-    void heapifyUp(int index)
+    void heapifyUp(int index) // Function to maintain the max-heap property
     {
         while (index > 0)
         {
@@ -339,7 +339,7 @@ private:
     }
 
     // Heapify down for maintaining max-heap property
-    void heapifyDown(int index)
+    void heapifyDown(int index) // Function to maintain the max-heap property
     {
         int size = heap.size();
         while (true)
@@ -410,7 +410,7 @@ public:
         return heap.size();
     }
 };
-class CustomizableInfectionRates
+class CustomizableInfectionRates // This class is use to store the infection rates in a priority queue and get the highest infection rate
 {
 private:
     PriorityQueue<double> infection_rates;
@@ -439,7 +439,7 @@ public:
 };
 
 // ------------------------------------ RecoverySimulation Class ------------------------------------
-class RecoverySimulation
+class RecoverySimulation // This class is used to store the recoveries in a circular queue and calculate the average recovery rate
 {
 private:
     CircularQueue<int> recent_recoveries;
@@ -484,7 +484,7 @@ public:
 };
 
 // ------------------------------------ InfectionTrendsStatistics Class (from spread.cpp) ------------------------------------
-struct DailyData
+struct DailyData // Struct to store daily statistics data
 {
     int value; // Statistic value (infections, recoveries, deaths)
     DailyData *next;
@@ -492,7 +492,7 @@ struct DailyData
 };
 
 // ------------------------------------ Region Class (from spread.cpp) ------------------------------------
-class Region
+class Region // Purpose of this class is to store the region details and simulate the infection spread. how many people are infected, recovered and died
 {
 public:
     string name;          // Name of the region
@@ -504,7 +504,7 @@ public:
     int currentDay;       // Current day of simulation
 
     // Linked lists for daily statistics
-    DailyData *dailyInfected;
+    DailyData *dailyInfected; 
     DailyData *dailyRecovered;
     DailyData *dailyDeaths;
 
@@ -566,7 +566,11 @@ public:
     // Simulate the infection spread for a day
     void simulateDay()
     {
-        int newInfected = population * infectionRate / 100;
+// This kind of formula is typically seen in epidemiological models like:
+// SIR Model: In this model, 
+//the spread of disease is simplified into three compartments—Susceptible (S), Infected (I), and Recovered (R).
+// The infection rate affects how individuals move from the Susceptible to the Infected compartment.
+        int newInfected = population * infectionRate / 100; // formula to calculate the new infected people.
 
         addDailyData(dailyInfected, newInfected);
         infected = true;
@@ -599,7 +603,7 @@ public:
 };
 
 // ------------------------------------ MaxHeap Class (from spread.cpp) ------------------------------------
-class MaxHeap
+class MaxHeap // Purpose of this class is to store the infection rates in a max heap and get the top infection rate
 {
 private:
     pair<double, string> heap[10]; // Store pair of infection rate and region name
@@ -679,7 +683,7 @@ public:
 
 // ------------------------------------ PandemicSimulation Class (from spread.cpp) ------------------------------------
 template <typename T>
-class CustomQueue
+class CustomQueue // Purpose of this class is to store THE infection rates in a queue and get the front infection rate
 {
 private:
     struct Node
@@ -764,7 +768,7 @@ public:
         }
     }
 };
-class PandemicSimulation
+class PandemicSimulation // Purpose of this class is to simulate the infection spread between regions
 {
 private:
     unordered_map<string, vector<string>> connections;
@@ -800,7 +804,8 @@ public:
         }
     }
 
-    // Enhanced Simulate Infection Spread using BFS with Detailed Statistics
+    // Enhanced Simulate Infection Spread using BFS with Detailed Statistics reason for this function is to simulate the infection spread between regions
+    // since BFS is used, the infection will spread level by level
     void simulateSpread(string startRegion, double initialInfectionRate, InfectionTrendsAndStatistics &infectionStats, RecoverySimulation &recoverySim)
     {
         if (regions.count(startRegion) == 0)
@@ -938,7 +943,7 @@ public:
         setConsoleColor(15);
     }
 
-    void advanceOneDay(InfectionTrendsAndStatistics &infectionStats, RecoverySimulation &recoverySim)
+    void advanceOneDay(InfectionTrendsAndStatistics &infectionStats, RecoverySimulation &recoverySim) // Function to advance the simulation by one day
     {
         // Iterate through all regions
         for (auto &entry : regions)
@@ -1127,16 +1132,16 @@ int main()
     {
         setConsoleColor(2); // Light green text
         cout << "\t====== Simulation Menu =====\n";
-        cout << "|\t1. Add Intervention\t|\n";
-        cout << "|\t2. Remove Intervention\t|\n";
+        cout << "|\t1. Add Intervention\t\t|\n";
+        cout << "|\t2. Remove Intervention\t\t|\n";
         cout << "|\t3. View Current Interventions\t|\n";
         cout << "|\t4. Run Simulation Step (" << current_day << " Day)\t|\n";
         cout << "|\t5. Run Entire Simulation\t|\n";
-        cout << "|\t6. View Statistics\t|\n";
+        cout << "|\t6. View Statistics\t\t|\n";
         cout << "|\t7. Customize Infection Rate\t|\n"; // New option
         cout << "|\t8. Customize Recovery Rate\t|\n";  // New option
         cout << "|\t9. Manage Pandemic Spread\t|\n";   // New option for PandemicSimulation
-        cout << "|\t10. Exit\t|";
+        cout << "|\t10. Exit\t\t|";
         cout << "\t===============================\n"; // Updated exit option number
         cout << "Select an option: ";
         setConsoleColor(15); // Reset to default
@@ -1391,12 +1396,13 @@ int main()
             {
                 double new_gamma;
 
-                cout << "Enter new recovery rate (gamma, e.g., 0.1): ";
+                cout << "Enter new recovery rate (between 0 ot 100): ";
                 cin >> new_gamma;
+                new_gamma /= 100; // Convert to percentage
                 if (new_gamma < 0.0 || new_gamma > 1.0)
                 {
                     setConsoleColor(4); // Light red text
-                    cout << "Invalid recovery rate. Please enter a value between 0 and 1.\n";
+                    cout << "Invalid recovery rate. Please enter a value between 0 and 100.\n";
                     setConsoleColor(15); // Reset to default
                     break;
                 }
@@ -1486,7 +1492,7 @@ int main()
                     setConsoleColor(15); // Reset to default
                     getline(cin, startRegion);
                     setConsoleColor(2); // Light green text
-                    cout << "Enter the initial infection rate (percentage): ";
+                    cout << "Enter the initial infection rate (percentage 0 to 100): ";
                     setConsoleColor(15); // Reset to default
                     cin >> initialInfectionRate;
                     cin.ignore();
