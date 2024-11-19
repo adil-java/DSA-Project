@@ -1174,7 +1174,7 @@ int main()
             cin >> start_day;
 
             // Define activation and deactivation conditions (simple examples)
-            function<bool(double, double, double)> activate_cond = [&](double day, double inf, double b) -> bool
+            function<bool(double, double, double)> activate_cond = [&](double day, double inf, double b) -> bool 
             {
                 return day >= start_day;
             };

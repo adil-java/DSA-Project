@@ -1033,7 +1033,7 @@ int main()
             setConsoleColor(15); // Reset to default
         }
         setConsoleColor(2); // Light green text
-        cout << "Enter infection rate (beta, e.g., 1.0): ";
+        cout << "Enter infection rate (between 0 to 100): ";
         setConsoleColor(15); // Reset to default
         cin >> beta;
         if (beta < 0.0 || beta > 100.0)
@@ -1045,9 +1045,10 @@ int main()
         }
         customInfectionRates.addInfectionRate(beta); // Initialize with initial beta
         setConsoleColor(2);                          // Light green text
-        cout << "Enter recovery rate (gamma, e.g., 0.1): ";
+        cout << "Enter recovery rate (between 0 to 100): ";
         setConsoleColor(15); // Reset to default
         cin >> gamma;
+        gamma /= 100.0; // Convert to percentage
         if (gamma < 0.0 || gamma > 1.0)
         {
             setConsoleColor(4); // Light red text
