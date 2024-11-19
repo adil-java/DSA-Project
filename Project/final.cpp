@@ -66,7 +66,7 @@ class MaxHeap
 private:
     vector<pair<double, string>> heap; // Stores pairs of (infection rate, region name)
 
-    void heapifyUp(int index)
+    void heapifyUp(int index) // Ensures the max-heap property is maintained when a new element is added.
     {
         while (index > 0)
         {
@@ -80,7 +80,7 @@ private:
         }
     }
 
-    void heapifyDown(int index)
+    void heapifyDown(int index) // Ensures the max-heap property is maintained when the top element is removed.
     {
         int size = heap.size();
         while (index < size)
@@ -171,9 +171,14 @@ public:
     {
         if (infected)
         {
-            int recovered = static_cast<int>(currentlyInfected * disease->recoveryRate); // Recovery based on disease recovery rate
+            int recovered = static_cast<int>(currentlyInfected * disease->recoveryRate); // Recovery based on disease recovery rate   static_cast<int> is used to convert the result (which could be a floating-point number) into an integer.
             int deaths = static_cast<int>(currentlyInfected * disease->deathRate);       // Deaths based on disease death rate
             currentlyInfected -= (recovered + deaths);
+            int totalChanges = recovered + deaths;
+            if (totalChanges > currentlyInfected)
+                totalChanges = currentlyInfected;
+            currentlyInfected -= totalChanges;
+
             if (currentlyInfected < 0)
                 currentlyInfected = 0;
 
@@ -188,11 +193,17 @@ public:
     void updateInfection(int newInfected)
     {
         currentlyInfected += newInfected;
-        currentlyInfected = min(currentlyInfected, population); // Cap at population
+        if (currentlyInfected < 0)
+            currentlyInfected = 0;
+        currentlyInfected = min(currentlyInfected, population);
     }
-
     void resetInfectionRate(double newInfectionRate)
     {
+        if (newInfectionRate < 0.0 || newInfectionRate > 1.0)
+        {
+            cout << "Error: Infection rate must be between 0 and 1." << endl;
+            return;
+        }
         infectionRate = newInfectionRate;
     }
 };
@@ -279,7 +290,7 @@ public:
 
     bool removeIntervention(const string &name, unordered_map<string, Region *> &regions)
     {
-        auto it = find_if(interventions.begin(), interventions.end(),
+        auto it = find_if(interventions.begin(), interventions.end(), //automatically define type 
                           [&](const Intervention &intervention)
                           { return intervention.name == name; });
         if (it != interventions.end())
@@ -328,7 +339,7 @@ public:
     // Connect two regions (bidirectional)
     void connectRegions(string region1, string region2)
     {
-        if (regions.count(region1) && regions.count(region2))
+        if (regions.count(region1) && regions.count(region2)) // check if key exists in the map
         {
             connections[region1].push_back(region2);
             connections[region2].push_back(region1);
@@ -424,7 +435,7 @@ public:
         Queue bfsQueue;
         bfsQueue.enQueue(startRegion);
         regions[startRegion]->infected = true;
-        regions[startRegion]->updateInfection(static_cast<int>((initialInfectionRate / 100) * regions[startRegion]->population)); // Set initial infected
+        regions[startRegion]->updateInfection(static_cast<int>((initialInfectionRate / 100) * regions[startRegion]->population)); // Set initial infected // convert float into integer
         infectionHeap.insert(initialInfectionRate, startRegion);
 
         cout << "Simulating infection spread...\n";
@@ -593,7 +604,7 @@ void Display()
     // Interactive menu for simulation
     int choice;
     double beta = 0.0;  // Infection rate
-    double gamma = 0.1; // Set a default recovery rate
+    double gamma = 0.0; // Set a default recovery rate
 
     do
     {
@@ -671,23 +682,23 @@ void Display()
             cout << "Enter intervention type (lockdown(L)/quarantine(Q)/vaccination(V)): ";
 
             getline(cin, type);
-            type=tolower(type[0]);
+            type = tolower(type[0]);
 
             // Hardcoded effectiveness values for each intervention type
             double effectiveness;
             if (type == "l")
             {
-                type="lockdown";
+                type = "lockdown";
                 effectiveness = 70.0; // 70% effectiveness
             }
             else if (type == "q")
             {
-                type="quarantine";
+                type = "quarantine";
                 effectiveness = 50.0; // 50% effectiveness
             }
             else if (type == "v")
             {
-                type="vaccination";
+                type = "vaccination";
                 effectiveness = 80.0; // 80% effectiveness
             }
             else
@@ -747,7 +758,7 @@ void Display()
 // ------------------------------------ Main Function ------------------------------------
 int main()
 {
-    cout<<"Welcome to the Pandemic Simulation System"<<endl;
+    cout << "Welcome to the Pandemic Simulation System" << endl;
     Display();
     return 0;
 }
