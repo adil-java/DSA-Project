@@ -10,7 +10,8 @@
 using namespace std;
 
 // ------------------------------------ Dynamic Intervention Class ------------------------------------
-void setConsoleColor(int color) {
+void setConsoleColor(int color)
+{
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(hConsole, color);
 }
@@ -86,7 +87,7 @@ public:
     {
         for (const auto &intervention : interventions)
         {
-         
+
             cout << "Intervention " << intervention.name << " | Type: " << intervention.type
                  << " | Start: " << intervention.start_DAYS << " | End: " << intervention.end_DAYS
                  << " | Effectiveness: " << intervention.effectiveness << "\n";
@@ -121,13 +122,27 @@ private:
     int rear;        // Index of the rear element
     int capacity;    // Maximum capacity of the queue
     int currentSize; // Current size of the queue
+    void resize()
+    {
+        int newCapacity = capacity * 2;
+        vector<T> newQueue(newCapacity);
+
+        // Copy elements to the new queue
+        for (int i = 0; i < currentSize; i++)
+        {
+            newQueue[i] = queue[(front + i) % capacity];
+        }
+
+        queue = newQueue;
+        capacity = newCapacity;
+        front = 0;
+        rear = currentSize - 1;
+    }
 
 public:
     // Constructor
-    CircularQueue(int maxSize) : capacity(maxSize),
-                                 front(-1),
-                                 rear(-1),
-                                 currentSize(0)
+    CircularQueue(int maxSize = 999999999)
+        : capacity(maxSize), front(-1), rear(-1), currentSize(0)
     {
         queue.resize(capacity);
     }
@@ -137,8 +152,8 @@ public:
     {
         if (isFull())
         {
-            cout << "Queue is full. Cannot enqueue " << value << endl;
-            return false;
+            // cout << "Queue is full. Cannot enqueue " << value << endl;
+            resize();
         }
 
         if (isEmpty())
@@ -866,8 +881,8 @@ public:
             recoverySim.recordRecovery(totalRecoveries);
 
             // Display daily statistics
-               setConsoleColor(4); // Light green text
-            cout << "\t Daily Statistics for Day " << "[ "<<day<<" ]" << ":\n";
+            setConsoleColor(4); // Light green text
+            cout << "\t Daily Statistics for Day " << "[ " << day << " ]" << ":\n";
             cout << "\t New Infections: " << dailyStats[day].first << "\n";
             cout << "\t New Recoveries: " << dailyStats[day].second << "\n";
             cout << "\t Total Infected: " << totalInfected << "\n";
@@ -1021,10 +1036,10 @@ int main()
             setConsoleColor(4); // Light red text
             cout << "Invalid infection rate. Please enter a value between 0 and 100.\n";
             setConsoleColor(15); // Reset to default
-            return 1; // Exit the program due to invalid input
+            return 1;            // Exit the program due to invalid input
         }
         customInfectionRates.addInfectionRate(beta); // Initialize with initial beta
-        setConsoleColor(2); // Light green text
+        setConsoleColor(2);                          // Light green text
         cout << "Enter recovery rate (gamma, e.g., 0.1): ";
         setConsoleColor(15); // Reset to default
         cin >> gamma;
@@ -1033,7 +1048,7 @@ int main()
             setConsoleColor(4); // Light red text
             cout << "Invalid recovery rate. Please enter a value between 0 and 1.\n";
             setConsoleColor(15); // Reset to default
-            return 1; // Exit the program due to invalid input
+            return 1;            // Exit the program due to invalid input
         }
         recoverySim.recordRecovery(static_cast<int>(gamma * 100)); // Store as percentage
 
@@ -1121,8 +1136,8 @@ int main()
         cout << "|\t7. Customize Infection Rate\t|\n"; // New option
         cout << "|\t8. Customize Recovery Rate\t|\n";  // New option
         cout << "|\t9. Manage Pandemic Spread\t|\n";   // New option for PandemicSimulation
-        cout << "|\t10. Exit\t|";        
-        cout<<"\t===============================\n";            // Updated exit option number
+        cout << "|\t10. Exit\t|";
+        cout << "\t===============================\n"; // Updated exit option number
         cout << "Select an option: ";
         setConsoleColor(15); // Reset to default
         int choice;
@@ -1138,7 +1153,7 @@ int main()
             setConsoleColor(2); // Light green text
             cout << "Enter intervention name: ";
             setConsoleColor(15); // Reset to default
-            cin >> ws; // To consume any leading whitespace
+            cin >> ws;           // To consume any leading whitespace
             getline(cin, name);
             setConsoleColor(2); // Light green text
             cout << "Enter intervention type (lockdown/quarantine/vaccination): ";
@@ -1179,14 +1194,14 @@ int main()
             setConsoleColor(2); // Light green text
             cout << "Enter the name of the intervention to remove: ";
             setConsoleColor(15); // Reset to default
-            cin >> ws; // To consume any leading whitespace
+            cin >> ws;           // To consume any leading whitespace
             getline(cin, name);
 
             // Implement removal by name
             bool removed = model.removeIntervention(name);
             setConsoleColor(2); // Light green text
             if (removed)
-                
+
                 cout << "Intervention \"" << name << "\" removed successfully.\n";
             else
                 cout << "Intervention \"" << name << "\" not found.\n";
