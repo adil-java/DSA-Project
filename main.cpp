@@ -1,18 +1,23 @@
 #include <iostream>
 #include <bits/stdc++.h>
-#include <iostream>
-#include <vector>
-#include <string>
-#include <functional>
 using namespace std;
 
 class InfectionSpread
 {
     // yaafay
 };
+
+#include <iostream>
+#include <vector>
+#include <string>
+#include <functional>
+
 class InfectionTrendsAndStatistics
 {
-    // ali
+};
+
+class InfectionTrendsAndStatistics
+{
 };
 
 class CustomizableInfectionRates
@@ -32,7 +37,6 @@ class AddandRemoveRegions
 
 class OptimizedRouteandPolicySuggestions
 {
-    // yaafay
 };
 
 class AdjustmentsBasedonNewData
