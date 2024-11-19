@@ -1,3 +1,8 @@
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#include <winsock2.h>
+#include <winspool.h>
+#include <iphlpapi.h>
 #include <iostream>
 #include <string>
 #include <functional>
@@ -506,6 +511,12 @@ public:
         }
     }
 };
+// ================= Changing terminal Color
+
+void setConsoleColor(int color) {
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(hConsole, color);
+}
 
 // ------------------------------------ Main Interactive Function ------------------------------------
 void Display()
@@ -521,7 +532,9 @@ void Display()
 
     // Interactive setup for regions and connections
     int numRegions;
+    setConsoleColor(10);
     cout << "Enter the number of regions: ";
+    setConsoleColor(15);
     cin >> numRegions;
     cin.ignore(); // To consume the newline character left by cin
 
@@ -583,12 +596,13 @@ void Display()
 
     // Start simulation
     string startRegion;
+    setConsoleColor(1);
     cout << "\nEnter the starting region for infection simulation: ";
     getline(cin, startRegion);
 
     // Start spreading the infection
     simulation.simulateSpread(startRegion);
-
+    setConsoleColor(15);
     // Interactive menu for simulation
     int choice;
     double beta = 0.0;  // Infection rate
@@ -596,8 +610,9 @@ void Display()
 
     do
     {
-        
+        setConsoleColor(1);
         cout << "\n========= Simulation Menu =========\n";
+        setConsoleColor(2);
         cout << "|\t1. Run Simulation for One Day     |\n";
         cout << "|\t2. Run Entire Simulation          |\n";
         cout << "|\t3. Display Regions                |\n";
@@ -609,8 +624,8 @@ void Display()
         cout << "|\t9. Exit                           |\n";
         cout << "======================================\n";
         cout << "Select an option: ";
+    setConsoleColor(15);
         cin >> choice;
-
         switch (choice)
         {
         case 1:
@@ -627,8 +642,10 @@ void Display()
         {
             // Run Entire Simulation
             int days;
+            setConsoleColor(4);
             cout << "Enter the number of days to simulate: ";
             cin >> days;
+            setConsoleColor(15);
 
             for (int day = 0; day < days; ++day)
             {
