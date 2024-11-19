@@ -596,16 +596,18 @@ void Display()
 
     do
     {
-        cout << "\n=== Simulation Menu ===\n";
-        cout << "1. Run Simulation for One Day\n";
-        cout << "2. Run Entire Simulation\n";
-        cout << "3. Display Regions\n";
-        cout << "4. Display Statistics\n";
-        cout << "5. Display Highest Infection Rate\n";
-        cout << "6. Add Intervention\n";
-        cout << "7. Remove Intervention\n";
-        cout << "8. View Current Interventions\n";
-        cout << "9. Exit\n";
+        
+        cout << "\n========= Simulation Menu =========\n";
+        cout << "|\t1. Run Simulation for One Day     |\n";
+        cout << "|\t2. Run Entire Simulation          |\n";
+        cout << "|\t3. Display Regions                |\n";
+        cout << "|\t4. Display Statistics             |\n";
+        cout << "|\t5. Display Highest Infection Rate |\n";
+        cout << "|\t6. Add Intervention               |\n";
+        cout << "|\t7. Remove Intervention            |\n";
+        cout << "|\t8. View Current Interventions     |\n";
+        cout << "|\t9. Exit                           |\n";
+        cout << "======================================\n";
         cout << "Select an option: ";
         cin >> choice;
 
