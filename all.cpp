@@ -8,8 +8,9 @@
 #include <functional>
 #include <limits> // For std::numeric_limits
 #include <algorithm>
-#include <utility>
 using namespace std;
+
+// Compare this snippet from CPPTRYALI.cpp:
 
 // ------------------------------------ Dynamic Intervention Class ------------------------------------
 class DynamicIntervention
@@ -309,6 +310,7 @@ public:
 };
 
 // ------------------------------------ Main Interactive Function ------------------------------------
+
 int main()
 {
     DynamicIntervention model;
@@ -320,8 +322,9 @@ int main()
     int population;
     int infected;
     int recovered = 0; // Initialize recovered population
-    bool exit_program = false;
+    int current_day = 0;
     bool is_simulation_running = false;
+    bool exit_program = false;
     cout << "Do you want to run the simulation? (y/n): ";
     char run_simulation;
     cin >> run_simulation;
@@ -371,150 +374,93 @@ int main()
         cin >> gamma;
         // Assuming gamma is a rate between 0 and 1
         recoverySim.recordRecovery(static_cast<int>(gamma * 100)); // Store as percentage
-
-        bool exit_program = false;
-    }
-    double current_day = 0;
-
-    while (!exit_program)
-    {
-        cout << "\n=== Simulation Menu ===\n";
-        cout << "1. Add Intervention\n";
-        cout << "2. Remove Intervention\n";
-        cout << "3. View Current Interventions\n";
-        cout << "4. Run Simulation Step (" << current_day << " Day)\n";
-        cout << "5. Run Entire Simulation\n";
-        cout << "6. View Statistics\n";
-        cout << "7. Customize Infection Rate\n"; // New option
-        cout << "8. Customize Recovery Rate\n";  // New option
-        cout << "9. Exit\n";                     // Updated exit option number
-        cout << "Select an option: ";
-
-        int choice;
-        cin >> choice;
-
-        switch (choice)
+        while (!exit_program)
         {
-        case 1:
-        {
-            // Add Intervention
-            string name, type;
-            double start_day, effectiveness;
-            cout << "Enter intervention name: ";
-            cin >> ws; // To consume any leading whitespace
-            getline(cin, name);
-            cout << "Enter intervention type (lockdown/quarantine/vaccination): ";
-            getline(cin, type);
+            cout << "\n=== Simulation Menu ===\n";
+            cout << "0. Provide Information\n";
+            cout << "1. Add Intervention\n";
+            cout << "2. Remove Intervention\n";
+            cout << "3. View Current Interventions\n";
+            cout << "4. Run Simulation Step (" << current_day << " Day)\n";
+            cout << "5. Run Entire Simulation\n";
+            cout << "6. View Statistics\n";
+            cout << "7. Customize Infection Rate\n"; // New option
+            cout << "8. Customize Recovery Rate\n";
+            cout << "9. Spread Simulation" << "\n"; // New option
+            cout << "10. Exit\n";                   // Updated exit option number
+            cout << "Select an option: ";
 
-            cout << "Enter effectiveness percentage (0-100): ";
-            cin >> effectiveness;
+            int choice;
+            cin >> choice;
 
-            cout << "Enter start day for the intervention: ";
-            cin >> start_day;
-
-            // Define activation and deactivation conditions (simple examples)
-            function<bool(double, double, double)> activate_cond = [&](double day, double inf, double b) -> bool
+            switch (choice)
             {
-                return day >= start_day;
-            };
-
-            function<bool(double, double, double)> deactivate_cond = [&](double day, double inf, double b) -> bool
+            case 1:
             {
-                // Example: Deactivate after 5 days
-                return day >= (start_day + 5);
-            };
+                // Add Intervention
+                string name, type;
+                double start_day, effectiveness;
+                cout << "Enter intervention name: ";
+                cin >> ws; // To consume any leading whitespace
+                getline(cin, name);
+                cout << "Enter intervention type (lockdown/quarantine/vaccination): ";
+                getline(cin, type);
 
-            model.addIntervention(name, start_day, effectiveness, type, activate_cond, deactivate_cond, simulation_duration);
-            cout << "Intervention added successfully.\n";
+                cout << "Enter effectiveness percentage (0-100): ";
+                cin >> effectiveness;
 
-            break;
-        }
-        case 2:
-        {
-            // Remove Intervention
-            string name;
-            cout << "Enter the name of the intervention to remove: ";
-            cin >> ws; // To consume any leading whitespace
-            getline(cin, name);
+                cout << "Enter start day for the intervention: ";
+                cin >> start_day;
 
-            // Implement removal by name
-            bool removed = model.removeIntervention(name);
-            if (removed)
-                cout << "Intervention \"" << name << "\" removed successfully.\n";
-            else
-                cout << "Intervention \"" << name << "\" not found.\n";
+                // Define activation and deactivation conditions (simple examples)
+                function<bool(double, double, double)> activate_cond = [&](double day, double inf, double b) -> bool
+                {
+                    return day >= start_day;
+                };
 
-            break;
-        }
-        case 3:
-        {
-            // View Current Interventions
-            model.printInterventions();
-            break;
-        }
-        case 4:
-        {
-            // Run Simulation Step (One Day)
-            if (current_day > simulation_duration)
-            {
-                cout << "Simulation has already reached the end.\n";
+                function<bool(double, double, double)> deactivate_cond = [&](double day, double inf, double b) -> bool
+                {
+                    // Example: Deactivate after 5 days
+                    return day >= (start_day + 5);
+                };
+
+                model.addIntervention(name, start_day, effectiveness, type, activate_cond, deactivate_cond, simulation_duration);
+                cout << "Intervention added successfully.\n";
+
                 break;
             }
-
-            cout << "\nDay: " << current_day << "\n";
-            // Apply interventions directly to beta and gamma
-            model.applyInterventions(beta, gamma, current_day, infected);
-            cout << "Infection Rate (Beta): " << beta << "\n";
-            cout << "Recovery Rate (Gamma): " << gamma << "\n";
-
-            // Calculate new infections and recoveries
-            // Simple model: SIR-like without susceptible tracking
-            // New infections: beta * infected
-            // New recoveries: gamma * infected
-            // Ensure that infections do not exceed population
-            double new_infections = beta * infected;
-            double new_recoveries = gamma * infected;
-
-            // Adjust to prevent exceeding population
-            if ((infected + new_infections - new_recoveries + recovered) > population)
+            case 2:
             {
-                new_infections = population - infected - recovered + new_recoveries;
-                if (new_infections < 0)
-                    new_infections = 0;
+                // Remove Intervention
+                string name;
+                cout << "Enter the name of the intervention to remove: ";
+                cin >> ws; // To consume any leading whitespace
+                getline(cin, name);
+
+                // Implement removal by name
+                bool removed = model.removeIntervention(name);
+                if (removed)
+                    cout << "Intervention \"" << name << "\" removed successfully.\n";
+                else
+                    cout << "Intervention \"" << name << "\" not found.\n";
+
+                break;
             }
-
-            infected = infected + static_cast<int>(new_infections) - static_cast<int>(new_recoveries);
-            recovered += static_cast<int>(new_recoveries);
-
-            // Ensure counts are within bounds
-            if (infected < 0)
-                infected = 0;
-            if (recovered > population)
-                recovered = population;
-            if (infected + recovered > population)
+            case 3:
             {
-                infected = population - recovered;
+                // View Current Interventions
+                model.printInterventions();
+                break;
             }
-
-            // Record infection data
-            infectionStats.recordInfection(infected);
-
-            // Record recovery data
-            recoverySim.recordRecovery(static_cast<int>(gamma * 100)); // Assuming gamma as percentage
-
-            // Display current state
-            cout << "Current Infected: " << infected << "\n";
-            cout << "Total Recovered: " << recovered << "\n";
-            cout << "Susceptible Population: " << (population - infected - recovered) << "\n";
-
-            current_day += 1;
-            break;
-        }
-        case 5:
-        {
-            // Run Entire Simulation
-            while (current_day <= simulation_duration)
+            case 4:
             {
+                // Run Simulation Step (One Day)
+                if (current_day > simulation_duration)
+                {
+                    cout << "Simulation has already reached the end.\n";
+                    break;
+                }
+
                 cout << "\nDay: " << current_day << "\n";
                 // Apply interventions directly to beta and gamma
                 model.applyInterventions(beta, gamma, current_day, infected);
@@ -522,6 +468,10 @@ int main()
                 cout << "Recovery Rate (Gamma): " << gamma << "\n";
 
                 // Calculate new infections and recoveries
+                // Simple model: SIR-like without susceptible tracking
+                // New infections: beta * infected
+                // New recoveries: gamma * infected
+                // Ensure that infections do not exceed population
                 double new_infections = beta * infected;
                 double new_recoveries = gamma * infected;
 
@@ -558,118 +508,169 @@ int main()
                 cout << "Susceptible Population: " << (population - infected - recovered) << "\n";
 
                 current_day += 1;
-            }
-            cout << "Simulation completed.\n";
-            break;
-        }
-        case 6:
-        {
-            // View Statistics
-            cout << "\n=== Simulation Statistics ===\n";
-            infectionStats.displayTrends();
-            recoverySim.printRecoveryStatistics();
-            cout << "Total Population: " << population << "\n";
-            cout << "Current Infected: " << infected << "\n";
-            cout << "Total Recovered: " << recovered << "\n";
-            cout << "Susceptible Population: " << (population - infected - recovered) << "\n";
-            break;
-        }
-        case 7:
-        {
-            // Customize Infection Rate
-            cout << "\n=== Customize Infection Rate ===\n";
-            cout << "1. Add a new Infection Rate\n";
-            cout << "2. View Current Infection Rates\n";
-            cout << "3. Remove the Highest Infection Rate\n";
-            cout << "4. Back to Main Menu\n";
-            cout << "Select an option: ";
-
-            int sub_choice;
-            cin >> sub_choice;
-
-            switch (sub_choice)
-            {
-            case 1:
-            {
-                double new_beta;
-                cout << "Enter new infection rate (beta): ";
-                cin >> new_beta;
-                customInfectionRates.addInfectionRate(new_beta);
-                cout << "New infection rate added.\n";
                 break;
             }
-            case 2:
+            case 5:
             {
-                customInfectionRates.printInfectionRates();
-                break;
-            }
-            case 3:
-            {
-                customInfectionRates.removeHighestInfectionRate();
-                cout << "Highest infection rate removed.\n";
-                break;
-            }
-            case 4:
-            {
-                // Back to Main Menu
-                break;
-            }
-            default:
-                cout << "Please select a valid option (1-4).\n";
-            }
+                // Run Entire Simulation
+                while (current_day <= simulation_duration)
+                {
+                    cout << "\nDay: " << current_day << "\n";
+                    // Apply interventions directly to beta and gamma
+                    model.applyInterventions(beta, gamma, current_day, infected);
+                    cout << "Infection Rate (Beta): " << beta << "\n";
+                    cout << "Recovery Rate (Gamma): " << gamma << "\n";
 
-            break;
-        }
-        case 8:
-        {
-            // Customize Recovery Rate
-            cout << "\n=== Customize Recovery Rate ===\n";
-            cout << "1. Add a new Recovery Rate\n";
-            cout << "2. View Current Recovery Rates\n";
-            cout << "3. Back to Main Menu\n";
-            cout << "Select an option: ";
+                    // Calculate new infections and recoveries
+                    double new_infections = beta * infected;
+                    double new_recoveries = gamma * infected;
 
-            int sub_choice;
-            cin >> sub_choice;
+                    // Adjust to prevent exceeding population
+                    if ((infected + new_infections - new_recoveries + recovered) > population)
+                    {
+                        new_infections = population - infected - recovered + new_recoveries;
+                        if (new_infections < 0)
+                            new_infections = 0;
+                    }
 
-            switch (sub_choice)
-            {
-            case 1:
-            {
-                double new_gamma;
-                cout << "Enter new recovery rate (gamma, e.g., 0.1): ";
-                cin >> new_gamma;
-                recoverySim.recordRecovery(static_cast<int>(new_gamma * 100)); // Assuming gamma as percentage
-                cout << "New recovery rate added.\n";
+                    infected = infected + static_cast<int>(new_infections) - static_cast<int>(new_recoveries);
+                    recovered += static_cast<int>(new_recoveries);
+
+                    // Ensure counts are within bounds
+                    if (infected < 0)
+                        infected = 0;
+                    if (recovered > population)
+                        recovered = population;
+                    if (infected + recovered > population)
+                    {
+                        infected = population - recovered;
+                    }
+
+                    // Record infection data
+                    infectionStats.recordInfection(infected);
+
+                    // Record recovery data
+                    recoverySim.recordRecovery(static_cast<int>(gamma * 100)); // Assuming gamma as percentage
+
+                    // Display current state
+                    cout << "Current Infected: " << infected << "\n";
+                    cout << "Total Recovered: " << recovered << "\n";
+                    cout << "Susceptible Population: " << (population - infected - recovered) << "\n";
+
+                    current_day += 1;
+                }
+                cout << "Simulation completed.\n";
                 break;
             }
-            case 2:
+            case 6:
             {
+                // View Statistics
+                cout << "\n=== Simulation Statistics ===\n";
+                infectionStats.displayTrends();
                 recoverySim.printRecoveryStatistics();
+                cout << "Total Population: " << population << "\n";
+                cout << "Current Infected: " << infected << "\n";
+                cout << "Total Recovered: " << recovered << "\n";
+                cout << "Susceptible Population: " << (population - infected - recovered) << "\n";
                 break;
             }
-            case 3:
+            case 7:
             {
-                // Back to Main Menu
+                // Customize Infection Rate
+                cout << "\n=== Customize Infection Rate ===\n";
+                cout << "1. Add a new Infection Rate\n";
+                cout << "2. View Current Infection Rates\n";
+                cout << "3. Remove the Highest Infection Rate\n";
+                cout << "4. Back to Main Menu\n";
+                cout << "Select an option: ";
+
+                int sub_choice;
+                cin >> sub_choice;
+
+                switch (sub_choice)
+                {
+                case 1:
+                {
+                    double new_beta;
+                    cout << "Enter new infection rate (beta): ";
+                    cin >> new_beta;
+                    customInfectionRates.addInfectionRate(new_beta);
+                    cout << "New infection rate added.\n";
+                    break;
+                }
+                case 2:
+                {
+                    customInfectionRates.printInfectionRates();
+                    break;
+                }
+                case 3:
+                {
+                    customInfectionRates.removeHighestInfectionRate();
+                    cout << "Highest infection rate removed.\n";
+                    break;
+                }
+                case 4:
+                {
+                    // Back to Main Menu
+                    break;
+                }
+                default:
+                    cout << "Please select a valid option (1-4).\n";
+                }
+
+                break;
+            }
+            case 8:
+            {
+                // Customize Recovery Rate
+                cout << "\n=== Customize Recovery Rate ===\n";
+                cout << "1. Add a new Recovery Rate\n";
+                cout << "2. View Current Recovery Rates\n";
+                cout << "3. Back to Main Menu\n";
+                cout << "Select an option: ";
+
+                int sub_choice;
+                cin >> sub_choice;
+
+                switch (sub_choice)
+                {
+                case 1:
+                {
+                    double new_gamma;
+                    cout << "Enter new recovery rate (gamma, e.g., 0.1): ";
+                    cin >> new_gamma;
+                    recoverySim.recordRecovery(static_cast<int>(new_gamma * 100)); // Assuming gamma as percentage
+                    cout << "New recovery rate added.\n";
+                    break;
+                }
+                case 2:
+                {
+                    recoverySim.printRecoveryStatistics();
+                    break;
+                }
+                case 3:
+                {
+                    // Back to Main Menu
+                    break;
+                }
+                default:
+                    cout << "Please select a valid option (1-3).\n";
+                }
+
+                break;
+            }
+            case 10:
+            {
+                // Exit
+                exit_program = true;
+                cout << "Exiting simulation. Goodbye!\n";
                 break;
             }
             default:
-                cout << "Please select a valid option (1-3).\n";
+                cout << "Please select a valid option (1-9).\n";
             }
+        }
 
-            break;
-        }
-        case 9:
-        {
-            // Exit
-            exit_program = true;
-            cout << "Exiting simulation. Goodbye!\n";
-            break;
-        }
-        default:
-            cout << "Please select a valid option (1-9).\n";
-        }
+        return 0;
     }
-
-    return 0;
 }

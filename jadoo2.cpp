@@ -966,10 +966,10 @@ int main()
     else
     {
         exit_program = true;
-        }
+    }
 
-        if (is_simulation_running)
-        {
+    if (is_simulation_running)
+    {
 
         cout << "=== Infection Simulation Interactive Setup ===\n";
 
@@ -993,7 +993,7 @@ int main()
         if (recovered > (population - infected))
         {
             cout << "Initial recovered cannot exceed population minus infected. Setting recovered to "
-             << (population - infected) << ".\n";
+                 << (population - infected) << ".\n";
             recovered = population - infected;
         }
 
@@ -1015,22 +1015,14 @@ int main()
         }
         recoverySim.recordRecovery(static_cast<int>(gamma * 100)); // Store as percentage
 
-        // Ask if user wants to add regions
-        char add_regions;
-        cout << "Do you want to add regions? (y/n): ";
-        cin >> add_regions;
-        cin.ignore(); // Consume newline
+        // Initialize Pandemic Simulation Regions
+        int numRegions;
+        cout << "\nEnter the number of regions for Pandemic Simulation: ";
+        cin >> numRegions;
+        cin.ignore(); // To consume the newline character left by cin
 
-        if (add_regions == 'y' || add_regions == 'Y')
+        for (int i = 0; i < numRegions; i++)
         {
-            // Initialize Pandemic Simulation Regions
-            int numRegions;
-            cout << "\nEnter the number of regions for Pandemic Simulation: ";
-            cin >> numRegions;
-            cin.ignore(); // To consume the newline character left by cin
-
-            for (int i = 0; i < numRegions; i++)
-            {
             string regionName;
             int regionPopulation;
 
@@ -1041,15 +1033,12 @@ int main()
             cin.ignore();
 
             pandemicSim.addRegion(regionName, regionPopulation);
-            }
+        }
 
-            // Connecting regions
-            string connectMore;
-            cout << "Do you want to add connections between regions? (y/n): ";
-            cin >> connectMore;
-            cin.ignore();
-            while (connectMore == "y" || connectMore == "Y")
-            {
+        // Connecting regions
+        string connectMore = "y";
+        while (connectMore == "y" || connectMore == "Y")
+        {
             string region1, region2;
             cout << "\nEnter two regions to connect:\nFirst Region: ";
             getline(cin, region1);
@@ -1057,39 +1046,33 @@ int main()
             getline(cin, region2);
 
             pandemicSim.connectRegions(region1, region2);
-
             cout << "Do you want to add more connections (y/n)? ";
             cin >> connectMore;
-            cin.ignore(); // Consume newline
-            }
-
-            // Start infection spread in Pandemic Simulation with Detailed Statistics
-            string startRegion;
-            double initialInfectionRate;
-            cout << "\nEnter the starting region for infection simulation: ";
-            getline(cin, startRegion);
-            cout << "Enter the initial infection rate (percentage): ";
-            cin >> initialInfectionRate;
             cin.ignore();
+        }
 
-            // Validate infection rate
-            if (initialInfectionRate < 0.0 || initialInfectionRate > 100.0)
-            {
+        // Start infection spread in Pandemic Simulation with Detailed Statistics
+        string startRegion;
+        double initialInfectionRate;
+        cout << "\nEnter the starting region for infection simulation: ";
+        getline(cin, startRegion);
+        cout << "Enter the initial infection rate (percentage): ";
+        cin >> initialInfectionRate;
+        cin.ignore();
+
+        // Validate infection rate
+        if (initialInfectionRate < 0.0 || initialInfectionRate > 100.0)
+        {
             cout << "Invalid infection rate. Please enter a value between 0 and 100.\n";
             return 1; // Exit the program due to invalid input
-            }
+        }
 
-            pandemicSim.simulateSpread(startRegion, initialInfectionRate, infectionStats, recoverySim);
-        }
-        else
-        {
-            cout << "Skipping region setup.\n";
-        }
-        }
-        double current_day = 0;
+        pandemicSim.simulateSpread(startRegion, initialInfectionRate, infectionStats, recoverySim);
+    }
+    double current_day = 0;
 
-        while (!exit_program)
-        {
+    while (!exit_program)
+    {
         cout << "\n=== Simulation Menu ===\n";
         cout << "1. Add Intervention\n";
         cout << "2. Remove Intervention\n";
