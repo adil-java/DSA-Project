@@ -1,7 +1,5 @@
 #include <iostream>
 #include <vector>
-#include <deque>
-#include <queue>
 #include <unordered_map>
 #include <map>
 #include <string>
@@ -106,51 +104,173 @@ private:
 };
 
 // ------------------------------------ InfectionTrendsAndStatistics Class ------------------------------------
+
+template <typename T>
+class CircularQueue
+{
+private:
+    vector<T> queue; // Vector to hold queue elements
+    int front;       // Index of the front element
+    int rear;        // Index of the rear element
+    int capacity;    // Maximum capacity of the queue
+    int currentSize; // Current size of the queue
+
+public:
+    // Constructor
+    CircularQueue(int maxSize) : capacity(maxSize),
+                                 front(-1),
+                                 rear(-1),
+                                 currentSize(0)
+    {
+        queue.resize(capacity);
+    }
+
+    // Add an element to the queue
+    bool enQueue(T value)
+    {
+        if (isFull())
+        {
+            cout << "Queue is full. Cannot enqueue " << value << endl;
+            return false;
+        }
+
+        if (isEmpty())
+        {
+            front = 0;
+        }
+
+        rear = (rear + 1) % capacity;
+        queue[rear] = value;
+        currentSize++;
+        return true;
+    }
+
+    // Remove and return the front element
+    T deQueue()
+    {
+        if (isEmpty())
+        {
+            throw runtime_error("Queue is empty. Cannot dequeue.");
+        }
+
+        T frontElement = queue[front];
+
+        if (front == rear)
+        {
+            // Queue becomes empty
+            front = rear = -1;
+        }
+        else
+        {
+            front = (front + 1) % capacity;
+        }
+
+        currentSize--;
+        return frontElement;
+    }
+
+    // Get the front element
+    T getFront() const
+    {
+        if (isEmpty())
+        {
+            throw runtime_error("Queue is empty. No front element.");
+        }
+        return queue[front];
+    }
+
+    // Check if the queue is empty
+    bool isEmpty() const
+    {
+        return currentSize == 0;
+    }
+
+    // Check if the queue is full
+    bool isFull() const
+    {
+        return currentSize == capacity;
+    }
+
+    // Get the current size of the queue
+    int size() const
+    {
+        return currentSize;
+    }
+
+    // Access element at a specific index
+    T operator[](int index) const
+    {
+        if (index < 0 || index >= currentSize)
+        {
+            throw out_of_range("Index out of range");
+        }
+        return queue[(front + index) % capacity];
+    }
+};
+
 class InfectionTrendsAndStatistics
 {
 private:
-    deque<int> infection_window;         // Sliding window of recent infection counts
-    priority_queue<int> infection_rates; // Max heap for the highest infection rates
+    CircularQueue<int> infection_window; // Sliding window of recent infection counts
+    vector<int> infection_rates;         // Vector to store infection rates
     int window_size;                     // Size of the sliding window
-    int current_infection_sum;           // Sum of infections in the sliding window
+    int current_infection_sum;
+    void validateWindowSize(int size)
+    {
+        if (size <= 0)
+        {
+            throw invalid_argument("Window size must be positive");
+        }
+    } // Sum of infections in the sliding window
 
 public:
     InfectionTrendsAndStatistics(int size = 7)
-        : window_size(size), current_infection_sum(0) {}
+        : infection_window(size),
+          window_size(size),
+          current_infection_sum(0) {}
 
     // Record new infection data
     void recordInfection(int count)
     {
-        infection_window.push_back(count);
-        current_infection_sum += count;
-
-        // Maintain sliding window
-        if (infection_window.size() > window_size)
+        // Add to sliding window
+        if (infection_window.isFull())
         {
-            current_infection_sum -= infection_window.front();
-            infection_window.pop_front();
+            current_infection_sum -= infection_window.getFront();
+            infection_window.deQueue();
         }
 
-        // Add to priority queue
-        infection_rates.push(count);
+        infection_window.enQueue(count);
+        current_infection_sum += count;
+
+        // Add to infection rates
+        infection_rates.push_back(count);
     }
 
     // Calculate the average infection rate over the sliding window
     double calculateAverageInfectionRate() const
     {
-        return infection_window.empty() ? 0.0 : static_cast<double>(current_infection_sum) / infection_window.size();
+        return infection_window.isEmpty() ? 0.0 : static_cast<double>(current_infection_sum) / infection_window.size();
     }
 
     // Get the highest infection rate recorded
     int getHighestInfectionRate()
     {
-        return infection_rates.empty() ? 0 : infection_rates.top();
+        if (infection_rates.empty())
+            return 0;
+
+        int highest = infection_rates[0];
+        for (int rate : infection_rates)
+        {
+            highest = max(highest, rate);
+        }
+        return highest;
     }
 
     // Display infection trends
     void displayTrends()
     {
-        cout << "Average Infection Rate (Last " << window_size << " Days): " << calculateAverageInfectionRate() << "\n";
+        cout << "Average Infection Rate (Last " << window_size << " Days): "
+             << calculateAverageInfectionRate() << "\n";
         cout << "Highest Infection Rate Recorded: " << getHighestInfectionRate() << "\n";
         cout << "Trend: " << (isIncreasingTrend() ? "Increasing" : "Stable/Decreasing") << "\n";
     }
@@ -161,36 +281,134 @@ public:
         if (infection_window.size() < 2)
             return false;
 
-        for (size_t i = 1; i < infection_window.size(); ++i)
+        // Ensure we have a complete comparison
+        for (int i = 1; i < infection_window.size(); ++i)
         {
-            if (infection_window[i] < infection_window[i - 1])
-                return false; // Any decrease breaks the trend
+            // Strict increasing trend
+            if (infection_window[i] <= infection_window[i - 1])
+                return false;
         }
         return true;
     }
 };
 
 // ------------------------------------ CustomizableInfectionRates Class ------------------------------------
+template <typename T>
+class PriorityQueue
+{
+private:
+    vector<pair<T, int>> heap; // Pair of value and priority
+
+    // Heapify up for maintaining max-heap property
+    void heapifyUp(int index)
+    {
+        while (index > 0)
+        {
+            int parent = (index - 1) / 2;
+            if (heap[index].second > heap[parent].second)
+            { // Compare priorities
+                swap(heap[index], heap[parent]);
+                index = parent;
+            }
+            else
+            {
+                break;
+            }
+        }
+    }
+
+    // Heapify down for maintaining max-heap property
+    void heapifyDown(int index)
+    {
+        int size = heap.size();
+        while (true)
+        {
+            int leftChild = 2 * index + 1;
+            int rightChild = 2 * index + 2;
+            int largest = index;
+
+            if (leftChild < size && heap[leftChild].second > heap[largest].second)
+            {
+                largest = leftChild;
+            }
+            if (rightChild < size && heap[rightChild].second > heap[largest].second)
+            {
+                largest = rightChild;
+            }
+            if (largest == index)
+            {
+                break;
+            }
+            swap(heap[index], heap[largest]);
+            index = largest;
+        }
+    }
+
+public:
+    // Add an element with its priority
+    void push(const T &value, int priority)
+    {
+        heap.emplace_back(value, priority); // Add to the end
+        heapifyUp(heap.size() - 1);         // Maintain max-heap property
+    }
+
+    // Remove and return the element with the highest priority
+    T popFront()
+    {
+        if (heap.empty())
+        {
+            throw runtime_error("Priority queue is empty. Cannot pop.");
+        }
+
+        T topElement = heap[0].first;
+        heap[0] = heap.back(); // Move last element to root
+        heap.pop_back();       // Remove last element
+        heapifyDown(0);        // Maintain max-heap property
+        return topElement;
+    }
+
+    // Get the element with the highest priority without removing it
+    T top() const
+    {
+        if (heap.empty())
+        {
+            throw runtime_error("Priority queue is empty.");
+        }
+        return heap[0].first;
+    }
+
+    // Check if the priority queue is empty
+    bool isEmpty() const
+    {
+        return heap.empty();
+    }
+
+    // Get the size of the priority queue
+    int size() const
+    {
+        return heap.size();
+    }
+};
 class CustomizableInfectionRates
 {
 private:
-    priority_queue<double> infection_rates;
+    PriorityQueue<double> infection_rates;
 
 public:
     void addInfectionRate(double rate)
     {
-        infection_rates.push(rate);
+        infection_rates.push(rate, static_cast<int>(rate * 100));
     }
 
     double getHighestInfectionRate()
     {
-        return !infection_rates.empty() ? infection_rates.top() : 0.0;
+        return !infection_rates.isEmpty() ? infection_rates.top() : 0.0;
     }
 
     void removeHighestInfectionRate()
     {
-        if (!infection_rates.empty())
-            infection_rates.pop();
+        if (!infection_rates.isEmpty())
+            infection_rates.popFront();
     }
 
     void printInfectionRates()
@@ -203,29 +421,29 @@ public:
 class RecoverySimulation
 {
 private:
-    deque<int> recent_recoveries;
+    CircularQueue<int> recent_recoveries;
     int window_size;
     int current_recovery_sum;
     vector<DynamicIntervention::Intervention> interventions;
 
 public:
-    RecoverySimulation(int size = 7) : window_size(size), current_recovery_sum(0) {}
+    RecoverySimulation(int size = 7) : window_size(size), current_recovery_sum(0), recent_recoveries(size) {}
 
     void recordRecovery(int count)
     {
-        recent_recoveries.push_back(count);
+        recent_recoveries.enQueue(count);
         current_recovery_sum += count;
 
         if (recent_recoveries.size() > window_size)
         {
-            current_recovery_sum -= recent_recoveries.front();
-            recent_recoveries.pop_front();
+            current_recovery_sum -= recent_recoveries.getFront();
+            recent_recoveries.deQueue();
         }
     }
 
     double calculateAverageRecoveryRate() const
     {
-        return recent_recoveries.empty() ? 0.0 : static_cast<double>(current_recovery_sum) / recent_recoveries.size();
+        return recent_recoveries.isEmpty() ? 0.0 : static_cast<double>(current_recovery_sum) / recent_recoveries.size();
     }
 
     void applyInterventions(double &gamma, double current_DAYS, double recovered)
@@ -439,6 +657,92 @@ public:
 };
 
 // ------------------------------------ PandemicSimulation Class (from spread.cpp) ------------------------------------
+template <typename T>
+class CustomQueue
+{
+private:
+    struct Node
+    {
+        T data;
+        Node *next;
+        Node(T value) : data(value), next(nullptr) {}
+    };
+
+    Node *frontNode;
+    Node *rearNode;
+    int queueSize;
+
+public:
+    CustomQueue() : frontNode(nullptr), rearNode(nullptr), queueSize(0) {}
+
+    // Push element to the queue
+    void push(T value)
+    {
+        Node *newNode = new Node(value);
+
+        if (isEmpty())
+        {
+            frontNode = rearNode = newNode;
+        }
+        else
+        {
+            rearNode->next = newNode;
+            rearNode = newNode;
+        }
+        queueSize++;
+    }
+
+    // Remove and return front element
+    T front()
+    {
+        if (isEmpty())
+        {
+            throw runtime_error("Queue is empty");
+        }
+        return frontNode->data;
+    }
+
+    // Remove front element
+    void pop()
+    {
+        if (isEmpty())
+        {
+            throw runtime_error("Queue is empty");
+        }
+
+        Node *temp = frontNode;
+        frontNode = frontNode->next;
+        delete temp;
+
+        // If queue becomes empty after popping
+        if (frontNode == nullptr)
+        {
+            rearNode = nullptr;
+        }
+        queueSize--;
+    }
+
+    // Check if queue is empty
+    bool isEmpty() const
+    {
+        return queueSize == 0;
+    }
+
+    // Get size of queue
+    int size() const
+    {
+        return queueSize;
+    }
+
+    // Destructor to free memory
+    ~CustomQueue()
+    {
+        while (!isEmpty())
+        {
+            pop();
+        }
+    }
+};
 class PandemicSimulation
 {
 private:
@@ -484,7 +788,7 @@ public:
             return;
         }
 
-        queue<string> bfsQueue;
+        CustomQueue<string> bfsQueue;
         bfsQueue.push(startRegion);
         regions[startRegion]->infected = true;
         regions[startRegion]->infectionRate = initialInfectionRate;
@@ -502,7 +806,7 @@ public:
         // Initialize day counter
         int day = 0;
 
-        while (!bfsQueue.empty())
+        while (!bfsQueue.isEmpty())
         {
             int currentLevelSize = bfsQueue.size();
             day++;
